@@ -1,7 +1,13 @@
 @import '../../node_modules/modern-normalize/modern-normalize.css';
 
+body {
+    padding-top: 3.5rem;
+    padding-bottom: 1rem;
+}
+
 .search-form {
     position: fixed;
+    transform: translateY(-117%);
     z-index: 1;
     width: 100%;
     height: 3rem;
@@ -44,11 +50,10 @@
 }
 
 .gallery {
-    margin-top: 3.5rem;
-    position: absolute;
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 .photo-card {
@@ -70,7 +75,6 @@
 
 .info {
     display: flex;
-    gap: 1rem;
 }
 
 .info-item {
@@ -78,20 +82,28 @@
 }
 
 .load-more {
+    display: block;
+    margin: 0 auto 0 auto;
     width: 15rem;
     height: 3rem;
-    color: #dbc4c8;
+    color: #44718f;
+    background-color: #c1d9e980;
     font-size: 2rem;
     border-radius: 0.33rem;
-    box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
-    -webkit-transition: all 150ms ease-in-out;
+    box-shadow: 3px 3px 5px #44718f;
     transition: all 150ms ease-in-out;
     border: none;
     cursor: pointer;
 }
 
-.load-more:hover {
-    box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
+.load-more:hover, .load-more:focus {
+    transform: scale(1.03);
+}
+
+.load-more:active {
+    transform: scale(1.03);
+    background-color: #44718f;
+    color: #c1d9e980;
 }
 
 .diplay-none {

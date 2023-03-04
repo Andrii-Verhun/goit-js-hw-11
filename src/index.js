@@ -5,22 +5,7 @@ const API_KEY = '34119717-c2cb4bf5c1e24db7e8481730d';
 
 const searchForm = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
-
-searchForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    const {
-        elements: { searchQuery }
-    } = evt.currentTarget;
-
-    search(URL, searchQuery.value, API_KEY) .then((response) => {
-        console.log(response);
-        renderGallery(response.data.hits);
-    })
-      .catch((error) => {
-        console.log(error);
-    });
-    
-});
+const buttonLoadMore = document.querySelector('.load-more')
 
 const renderGallery = (images = []) => {
     const galleryElements = images.reduce((acc, { webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
@@ -33,8 +18,31 @@ const renderGallery = (images = []) => {
             <p class="info-item"><b>Downloads</b> ${downloads}</p>
         </div></div>`;
 }, "")
-    gallery.innerHTML = galleryElements;
+    gallery.insertAdjacentHTML('afterbegin', galleryElements);
 };
+
+searchForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const {
+        elements: { searchQuery }
+    } = evt.currentTarget;
+    buttonLoadMore.classList.add('diplay-none');
+    gallery.innerHTML = "";
+
+    search(URL, searchQuery.value, API_KEY) .then((response) => {
+        console.log(response);
+        renderGallery(response.data.hits);
+    })
+      .catch((error) => {
+        console.log(error);
+    });
+    
+    setTimeout(() => {
+        buttonLoadMore.classList.remove('diplay-none');
+    }, 1000);
+});
+
+
 
 
 
