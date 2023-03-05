@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const search = (url, query, apiKey) => {
+export const search = (url, query, apiKey, numberPage) => {
     return axios.get(`${url}`, {
         params: {
             key: apiKey,
@@ -8,7 +8,7 @@ export const search = (url, query, apiKey) => {
             image_type: 'photo',
             orientation: 'horizontal',
             safesearch: true,
-            page: 1,
+            page: numberPage,
             per_page: 40
         }
     });
