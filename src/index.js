@@ -1,6 +1,7 @@
 import Notiflix from 'notiflix';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
+const throttle = require('lodash.throttle');
 import { search } from './js/searchFunction';
 
 const URL = 'https://pixabay.com/api/';
@@ -11,7 +12,8 @@ let largeGallery;
 
 const searchForm = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
-const buttonLoadMore = document.querySelector('.load-more')
+const buttonLoadMore = document.querySelector('.load-more');
+const body = document.querySelector('body');
 
 const renderGallery = (images = []) => {
     const galleryElements = images.reduce((acc, { webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
@@ -72,6 +74,18 @@ buttonLoadMore.addEventListener('click', () => {
         console.log(error);
     });
 });
+
+// document.addEventListener('scroll', throttle(() => {
+//     console.log('YES');
+//     const { height: cardHeight } = document
+//   .querySelector(".gallery")
+//   .firstElementChild.getBoundingClientRect();
+
+// window.scrollBy({
+//   top: cardHeight * 1,
+//   behavior: "smooth",
+// });
+// }, 500));
 
 
 
