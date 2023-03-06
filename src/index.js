@@ -13,7 +13,17 @@ let largeGallery;
 const searchForm = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
 const buttonLoadMore = document.querySelector('.load-more');
-const body = document.querySelector('body');
+const buttonScroll = document.querySelector('.button-scroll');
+let buttonScrollStatus = false;
+
+buttonScroll.addEventListener('click', () => {
+    buttonScroll.classList.toggle('button-scroll-active');
+    if (!buttonScrollStatus) {
+        buttonScrollStatus = true;
+    } else {
+        buttonScrollStatus = false;
+    };
+});
 
 const renderGallery = (images = []) => {
     const galleryElements = images.reduce((acc, { webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
@@ -63,6 +73,13 @@ buttonLoadMore.addEventListener('click', () => {
     search(URL, searchQueryValue, API_KEY, PAGE).then((response) => {
         renderGallery(response.data.hits);
         largeGallery.refresh();
+    
+        const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+        window.scrollBy({
+            top: cardHeight * 2,
+            behavior: "smooth",
+        });
+
         if (PAGE * 40 >= response.data.totalHits) {
             buttonLoadMore.classList.add('diplay-none');
             Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
@@ -75,31 +92,22 @@ buttonLoadMore.addEventListener('click', () => {
     });
 });
 
-// document.addEventListener('scroll', throttle(() => {
-//     console.log('YES');
-//     const { height: cardHeight } = document
-//   .querySelector(".gallery")
-//   .firstElementChild.getBoundingClientRect();
-
-// window.scrollBy({
-//   top: cardHeight * 1,
-//   behavior: "smooth",
-// });
-// }, 500));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+document.addEventListener('scroll', throttle((evt) => {
+    const { clientHeight, scrollTop, scrollHeight } = evt.target.scrollingElement;
+    if (clientHeight + scrollTop >= scrollHeight - clientHeight * 0.15) {
+        search(URL, searchQueryValue, API_KEY, PAGE).then((response) => {
+            renderGallery(response.data.hits);
+            largeGallery.refresh();
+    
+            if (PAGE * 40 >= response.data.totalHits) {
+                buttonLoadMore.classList.add('diplay-none');
+                Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+                return;
+            };
+            PAGE += 1;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+}, 200));

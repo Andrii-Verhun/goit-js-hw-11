@@ -40,7 +40,7 @@ a {
     color: #4f585e;
 }
 
-.search-form button {
+.button-submit {
     border-radius: 0.33rem;
     background-image: url('../image/search.svg');
     background-repeat: no-repeat;
@@ -52,7 +52,29 @@ a {
     transition: all 150ms ease-in-out;
 }
 
-.search-form button:hover {
+.button-scroll {
+    border-radius: 0.33rem;
+    height: 2.5rem;
+    border: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 150ms ease-in-out;
+    background-color: #b3624a;
+}
+
+.button-scroll-active {
+    background-color: #4ab379;
+}
+
+.button-scroll:hover {
+    background-color: #b64928;
+}
+
+.button-scroll-active:hover {
+    background-color: #0f9e4f;
+}
+
+.button-submit:hover {
    background-color: #9dbace;
 }
 
