@@ -18,6 +18,7 @@ let buttonScrollStatus = false;
 
 buttonScroll.addEventListener('click', () => {
     buttonScroll.classList.toggle('button-scroll-active');
+    buttonLoadMore.classList.add('diplay-none');
     if (!buttonScrollStatus) {
         buttonScrollStatus = true;
     } else {
@@ -94,7 +95,7 @@ buttonLoadMore.addEventListener('click', () => {
 
 document.addEventListener('scroll', throttle((evt) => {
     const { clientHeight, scrollTop, scrollHeight } = evt.target.scrollingElement;
-    if (clientHeight + scrollTop >= scrollHeight - clientHeight * 0.15) {
+    if (clientHeight + scrollTop >= scrollHeight - clientHeight * 0.15 && buttonScrollStatus) {
         search(URL, searchQueryValue, API_KEY, PAGE).then((response) => {
             renderGallery(response.data.hits);
             largeGallery.refresh();
@@ -110,4 +111,7 @@ document.addEventListener('scroll', throttle((evt) => {
             console.log(error);
         });
     }
+    if (!buttonScrollStatus) {
+        buttonLoadMore.classList.remove('diplay-none');
+    };
 }, 200));
