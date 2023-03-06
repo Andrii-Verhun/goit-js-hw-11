@@ -57,7 +57,7 @@ searchForm.addEventListener('submit', (evt) => {
         searchQueryValue = searchQuery.value;
         renderGallery(response.data.hits);
         largeGallery = new SimpleLightbox('.gallery a');
-        if (response.data.totalHits > 40) {
+        if (response.data.totalHits > 40 && !buttonScrollStatus) {
             setTimeout(() => {
                 buttonLoadMore.classList.remove('diplay-none');
             }, 1000);
