@@ -65,6 +65,18 @@ const loadMore = async () => {
     };
 };
 
+const infiniteScroll = () => {
+    document.addEventListener('scroll', throttle((evt) => {
+        const { clientHeight, scrollTop, scrollHeight } = evt.target.scrollingElement;
+        if (clientHeight + scrollTop >= scrollHeight - clientHeight * 0.15 && buttonScrollStatus) {
+            loadMore();
+        };
+        if (!buttonScrollStatus) {
+            buttonLoadMore.classList.remove('diplay-none');
+        };
+    }, 200));
+};
+
 searchForm.addEventListener('submit', async (evt) => {
     evt.preventDefault();
     const {
@@ -86,24 +98,18 @@ searchForm.addEventListener('submit', async (evt) => {
         largeGallery = new SimpleLightbox('.gallery a');
         searchQueryValue = searchQuery.value;
         PAGE += 1;
-        if (response.data.totalHits > 40 && !buttonScrollStatus) {
+        if ((response.data.totalHits > 40) && !buttonScrollStatus) {
             setTimeout(() => {
                 buttonLoadMore.classList.remove('diplay-none');
             }, 1000);
         };
+        if (response.data.totalHits > 40) {
+        buttonLoadMore.addEventListener('click', loadMore);
+        infiniteScroll();
+    };
     } catch (error) {
         console.log(error);
-    }
+    };
 });
 
-buttonLoadMore.addEventListener('click', loadMore);
 
-document.addEventListener('scroll', throttle((evt) => {
-    const { clientHeight, scrollTop, scrollHeight } = evt.target.scrollingElement;
-    if (clientHeight + scrollTop >= scrollHeight - clientHeight * 0.15 && buttonScrollStatus) {
-        loadMore();
-    };
-    if (!buttonScrollStatus) {
-        buttonLoadMore.classList.remove('diplay-none');
-    };
-}, 200));
