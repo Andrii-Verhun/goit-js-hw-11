@@ -40,77 +40,69 @@ const renderGallery = (images = []) => {
     gallery.insertAdjacentHTML('beforeend', galleryElements);
 };
 
-searchForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    const {
-        elements: { searchQuery }
-    } = evt.currentTarget;
-    buttonLoadMore.classList.add('diplay-none');
-    gallery.innerHTML = "";
-    PAGE = 1;
-
-    search(URL, searchQuery.value, API_KEY, PAGE).then((response) => {
-        if (response.data.hits.length === 0) {
-            Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
-            return
-        };
-        PAGE += 1;
-        searchQueryValue = searchQuery.value;
-        renderGallery(response.data.hits);
-        largeGallery = new SimpleLightbox('.gallery a');
-        if (response.data.totalHits > 40 && !buttonScrollStatus) {
-            setTimeout(() => {
-                buttonLoadMore.classList.remove('diplay-none');
-            }, 1000);
-        };
-        Notiflix.Notify.info(`Hooray! We found ${response.data.totalHits} images.`);
-    })
-      .catch((error) => {
-        console.log(error);
+const smoothScrolling = () => {
+    const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+    window.scrollBy({
+        top: cardHeight * 2,
+        behavior: "smooth",
     });
-});
+};
 
-buttonLoadMore.addEventListener('click', () => {
-    search(URL, searchQueryValue, API_KEY, PAGE).then((response) => {
+const loadMore = async () => {
+    try {
+        const response = await search(URL, searchQueryValue, API_KEY, PAGE);
         renderGallery(response.data.hits);
         largeGallery.refresh();
-    
-        const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
-        window.scrollBy({
-            top: cardHeight * 2,
-            behavior: "smooth",
-        });
-
+        smoothScrolling();
         if (PAGE * 40 >= response.data.totalHits) {
             buttonLoadMore.classList.add('diplay-none');
             Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
             return;
         };
         PAGE += 1;
-    })
-    .catch((error) => {
+    } catch (error) {
         console.log(error);
-    });
+    };
+};
+
+searchForm.addEventListener('submit', async (evt) => {
+    evt.preventDefault();
+    const {
+        elements: { searchQuery }
+    } = evt.currentTarget;
+    if (searchQuery.value.trim() === "") return;
+    buttonLoadMore.classList.add('diplay-none');
+    gallery.innerHTML = "";
+    PAGE = 1;
+
+    try {
+        const response = await search(URL, searchQuery.value, API_KEY, PAGE);
+        if (response.data.hits.length === 0) {
+            Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+            return
+        };
+        renderGallery(response.data.hits);
+        Notiflix.Notify.info(`Hooray! We found ${response.data.totalHits} images.`);
+        largeGallery = new SimpleLightbox('.gallery a');
+        searchQueryValue = searchQuery.value;
+        PAGE += 1;
+        if (response.data.totalHits > 40 && !buttonScrollStatus) {
+            setTimeout(() => {
+                buttonLoadMore.classList.remove('diplay-none');
+            }, 1000);
+        };
+    } catch (error) {
+        console.log(error);
+    }
 });
+
+buttonLoadMore.addEventListener('click', loadMore);
 
 document.addEventListener('scroll', throttle((evt) => {
     const { clientHeight, scrollTop, scrollHeight } = evt.target.scrollingElement;
     if (clientHeight + scrollTop >= scrollHeight - clientHeight * 0.15 && buttonScrollStatus) {
-        search(URL, searchQueryValue, API_KEY, PAGE).then((response) => {
-            renderGallery(response.data.hits);
-            largeGallery.refresh();
-    
-            if (PAGE * 40 >= response.data.totalHits) {
-                buttonLoadMore.classList.add('diplay-none');
-                Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
-                return;
-            };
-            PAGE += 1;
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
+        loadMore();
+    };
     if (!buttonScrollStatus) {
         buttonLoadMore.classList.remove('diplay-none');
     };
