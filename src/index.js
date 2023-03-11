@@ -53,7 +53,7 @@ const loadMore = async () => {
         const response = await search(URL, searchQueryValue, API_KEY, PAGE);
         renderGallery(response.data.hits);
         largeGallery.refresh();
-        smoothScrolling();
+        if (!buttonScrollStatus) smoothScrolling();
         if (PAGE * 40 >= response.data.totalHits) {
             buttonLoadMore.classList.add('diplay-none');
             Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
